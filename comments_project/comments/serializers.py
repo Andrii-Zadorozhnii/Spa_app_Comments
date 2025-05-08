@@ -10,14 +10,14 @@ ALLOWED_TAGS = ['a','code','i','strong']
 ALLOWED_ATTRIBUTES = {'a':['href','title']}
 
 class CommentSerializer(serializers.ModelSerializer):
-    captcha_key = serializers.CharField(write_only=True)
-    captcha_text = serializers.CharField(write_only=True)
-    replies = serializers.SerializerMethodField()
-    attachments = serializers.ListField(
-        child=serializers.FileField(),
-        write_only=True,
-        required=False
-    )
+    class Meta:
+        model = Comment
+        fields = ['username', 'email', 'homepage', 'text', 'captcha_key', 'captcha_text']
+        extra_kwargs = {
+            'homepage': {'required': False, 'allow_null': True},
+            'captcha_key': {'required': True},
+            'captcha_text': {'required': True}
+        }
 
     def validate_text(self, value):
         cleaned = bleach.clean(
